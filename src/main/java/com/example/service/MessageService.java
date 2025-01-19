@@ -20,13 +20,13 @@ public class MessageService {
 
     public List<Message> getMessages() {return (List<Message>) messageRepository.findAll();}
 
-    public String findByMessageId(int messageId){
+    public Message findByMessageId(int messageId){
         Optional<Message> messageFound = messageRepository.findById(messageId);
+        Message message = new Message();
         if (messageFound.isPresent()){
-            return messageFound.toString();
-        } else {
-            return "";
-        }
+            message = messageFound.get();
+        } 
+        return message;
     }
 
     public List<Message> getMessagesByAccountList(int accountId){

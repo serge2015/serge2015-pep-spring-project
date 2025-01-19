@@ -140,6 +140,5 @@ public class Account {
                 ", \"password\":\"" + password + '\"' +
                 '}';
     }
-    // "{\"accountId\":0,\"username\":\"testuser1\",\"password\":\"password\"}";
 
 }

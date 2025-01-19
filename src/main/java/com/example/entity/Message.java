@@ -165,13 +165,11 @@ public class Message {
      */
     @Override
     public String toString() {
-        return "Message{" +
-                "messageId=" + messageId +
-                ", postedBy=" + postedBy +
-                ", messageText='" + messageText + '\'' +
-                ", timePostedEpoch=" + timePostedEpoch +
+        return "{\"messageId\":" + messageId +
+                ", \"postedBy\":" + postedBy +
+                ", \"messageText\":\"" + messageText + '\"' +
+                ", \"timePostedEpoch\":" + timePostedEpoch +
                 '}';
     }
-
 
 }

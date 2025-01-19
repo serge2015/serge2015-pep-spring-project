@@ -51,9 +51,9 @@ public class SocialMediaController {
 
     @GetMapping("messages/{messageId}")
     public @ResponseBody ResponseEntity<String> findByMessageId(@PathVariable int messageId){
-        String messageToFind = messageService.findByMessageId(messageId);
-        if (messageToFind.isBlank()){
-            return ResponseEntity.status(200).body(null);
+        Message messageToFind = messageService.findByMessageId(messageId);
+        if (messageToFind.getMessageText() == null){
+            return ResponseEntity.status(200).body("");
         } else {
             return ResponseEntity.status(200).body(messageToFind.toString());
         }
@@ -77,8 +77,8 @@ public class SocialMediaController {
 
     @PatchMapping("messages/{messageId}")
     public @ResponseBody ResponseEntity<String> patchMessage(@PathVariable int messageId, @RequestBody String messageText){
-        String messageToFind = messageService.findByMessageId(messageId);        
-        if (messageText.charAt(17) != '"' && messageText.length() <= 255 && !messageToFind.isEmpty()){
+        Message messageToFind = messageService.findByMessageId(messageId);        
+        if (messageText.charAt(17) != '"' && messageText.length() <= 255 && !messageToFind.toString().isEmpty()){
             messageService.patchMessage(messageId, messageText);
             return ResponseEntity.status(200).body("1");
         } else {
@@ -109,7 +109,7 @@ public class SocialMediaController {
         @PostMapping("login")
         public ResponseEntity<String> login(@RequestBody Account account){
             Account loggedInAccount  = accountService.login(account.getUsername(), account.getPassword());
-            if (loggedInAccount.toString().isEmpty()){
+            if (loggedInAccount.getUsername() == null){
                 return ResponseEntity.status(401).body("");
             } else {
                 return ResponseEntity.status(200).body(loggedInAccount.toString());

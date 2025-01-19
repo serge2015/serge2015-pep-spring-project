@@ -33,9 +33,8 @@ public class AccountService {
         Account account = new Account();
         if (loggedinAccount.isPresent()){
             account = loggedinAccount.get();
-            return account;
         }
-        return null;
+        return account;
     }
 
     public Optional<Account> findByUsername(String username){
