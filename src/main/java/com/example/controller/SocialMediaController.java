@@ -23,6 +23,7 @@ import com.example.entity.Account;
 import com.example.entity.Message;
 import com.example.service.AccountService;
 import com.example.service.MessageService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.net.http.HttpResponse;
 import java.util.*;
@@ -49,11 +50,12 @@ public class SocialMediaController {
     }
 
     @GetMapping("messages/{messageId}")
-    public @ResponseBody ResponseEntity<Optional<Message>> findByMessageId(@PathVariable int messageId){
-        if (messageService.findByMessageId(messageId).toString().isEmpty()){
+    public @ResponseBody ResponseEntity<String> findByMessageId(@PathVariable int messageId){
+        String messageToFind = messageService.findByMessageId(messageId);
+        if (messageToFind.isBlank()){
             return ResponseEntity.status(200).body(null);
         } else {
-            return ResponseEntity.status(200).body(messageService.findByMessageId(messageId));
+            return ResponseEntity.status(200).body(messageToFind.toString());
         }
     }
 
@@ -65,8 +67,8 @@ public class SocialMediaController {
 
     @DeleteMapping("messages/{messageId}")
     public @ResponseBody ResponseEntity<String> deleteMessage(@PathVariable int messageId){
-        if (!messageService.findByMessageId(messageId).toString().isEmpty()){
-            messageService.deleteMessage(messageId);
+        Boolean deleted = messageService.deleteMessage(messageId);
+        if (deleted){
             return ResponseEntity.status(200).body("1");
         } else {
             return ResponseEntity.status(200).body(null);
@@ -75,7 +77,8 @@ public class SocialMediaController {
 
     @PatchMapping("messages/{messageId}")
     public @ResponseBody ResponseEntity<String> patchMessage(@PathVariable int messageId, @RequestBody String messageText){
-        if (messageText.length() > 0 && messageText.length() <= 255 && !messageService.findByMessageId(messageId).toString().isEmpty()){
+        String messageToFind = messageService.findByMessageId(messageId);        
+        if (messageText.charAt(17) != '"' && messageText.length() <= 255 && !messageToFind.isEmpty()){
             messageService.patchMessage(messageId, messageText);
             return ResponseEntity.status(200).body("1");
         } else {
@@ -104,28 +107,22 @@ public class SocialMediaController {
         }
 
         @PostMapping("login")
-        public ResponseEntity<Account> login(@RequestBody Account account){
-            Optional<Account> loggedInAccount  = accountService.login(account.getUsername(), account.getPassword());
-            if (loggedInAccount != null){
-                return ResponseEntity.status(200).body(account);
+        public ResponseEntity<String> login(@RequestBody Account account){
+            Account loggedInAccount  = accountService.login(account.getUsername(), account.getPassword());
+            if (loggedInAccount.toString().isEmpty()){
+                return ResponseEntity.status(401).body("");
             } else {
-                return ResponseEntity.status(401).body(account);
+                return ResponseEntity.status(200).body(loggedInAccount.toString());
             }
         }
 
         @PostMapping("register")
         public ResponseEntity<String> register(@RequestBody Account account){
-            boolean accountFound = false;
-            System.out.println(accountFound);
             Optional<Account> userAccountFound = accountService.findByUsername(account.getUsername());
-            System.out.println(userAccountFound);
-            if (userAccountFound != null){
-                accountFound = true;
-            }
-            if (account.getUsername().length() > 0 && account.getPassword().length() > 3 && !accountFound){
+            if (account.getUsername().length() > 0 && account.getPassword().length() > 3 && !userAccountFound.isPresent()){
                 accountService.register(account);
                 return ResponseEntity.status(200).body(account.toString());
-            } else if (accountFound){
+            } else if (userAccountFound.isPresent()){
                 return ResponseEntity.status(409).body(null);
             } else {
                 return ResponseEntity.status(400).body(null);

@@ -20,8 +20,13 @@ public class MessageService {
 
     public List<Message> getMessages() {return (List<Message>) messageRepository.findAll();}
 
-    public Optional<Message> findByMessageId(int messageId){
-        return messageRepository.findById(messageId);
+    public String findByMessageId(int messageId){
+        Optional<Message> messageFound = messageRepository.findById(messageId);
+        if (messageFound.isPresent()){
+            return messageFound.toString();
+        } else {
+            return "";
+        }
     }
 
     public List<Message> getMessagesByAccountList(int accountId){
@@ -29,15 +34,22 @@ public class MessageService {
         return accountMessageList;
     }
 
-    public void deleteMessage(int messageId){
-        messageRepository.deleteById(messageId);
-        return;
+    public boolean deleteMessage(int messageId){
+        Optional<Message> messageToDelete = messageRepository.findById(messageId);
+        if (messageToDelete.isPresent()){
+            messageRepository.deleteById(messageId);
+            return true;
+        }
+        return false;
     }
 
     public void patchMessage(int messageId, String messageText){
-        Message patchedMessage  = messageRepository.findById(messageId).orElseThrow();
-        patchedMessage.setMessageText(messageText);
-        messageRepository.save(patchedMessage);
+        Optional<Message> patchedMessage  = messageRepository.findById(messageId);
+        if (patchedMessage.isPresent()){
+            Message message = patchedMessage.get();
+            message.setMessageText(messageText);
+            messageRepository.save(message);
+        }
         return;
     }
 

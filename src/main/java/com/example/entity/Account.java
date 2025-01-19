@@ -135,14 +135,11 @@ public class Account {
      */
     @Override
     public String toString() {
-        return "Account{" +
-                "accountId=" + accountId +
-                ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
+        return "{\"accountId\":" + accountId +
+                ", \"username\":\"" + username + '\"' +
+                ", \"password\":\"" + password + '\"' +
                 '}';
     }
-    public boolean isNull() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'isNull'");
-    }
+    // "{\"accountId\":0,\"username\":\"testuser1\",\"password\":\"password\"}";
+
 }
