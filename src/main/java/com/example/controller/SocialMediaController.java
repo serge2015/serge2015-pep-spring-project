@@ -78,7 +78,7 @@ public class SocialMediaController {
     @PatchMapping("messages/{messageId}")
     public @ResponseBody ResponseEntity<String> patchMessage(@PathVariable int messageId, @RequestBody String messageText){
         Message messageToFind = messageService.findByMessageId(messageId);        
-        if (messageText.charAt(17) != '"' && messageText.length() <= 255 && !messageToFind.toString().isEmpty()){
+        if (messageText.charAt(17) != '"' && messageText.length() <= 255 && messageToFind.getMessageId() != null){
             messageService.patchMessage(messageId, messageText);
             return ResponseEntity.status(200).body("1");
         } else {
